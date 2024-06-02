@@ -1,4 +1,4 @@
-package com.example.flutter_sleepwell
+package com.example.flutter_login
 
 import io.flutter.embedding.android.FlutterActivity
 
