@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_login/JsonModels/users.dart';
-import 'package:flutter_login/SQLite/sqlite.dart';
+import 'package:flutter_login/SQLite/sqlite_user.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -201,7 +201,7 @@ class _SignupState extends State<Signup> {
                           isPasswordNotEqual = true; 
                         });
                       } else if (formKey.currentState!.validate()) {
-                        db.signup(Users(userName: usernameController.text, userPass: passwordController.text)).whenComplete(() {
+                        db.signup(Users(userName: usernameController.text, userPass: passwordController.text, emailAddress: emailController.text)).whenComplete(() {
                           Navigator.pop(context);
                         });
                       }

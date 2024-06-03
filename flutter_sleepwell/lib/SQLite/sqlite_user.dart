@@ -6,7 +6,7 @@ import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
   // the name of the database
-  final databaseName = 'users.db';
+  final databaseName = 'sleepwell.db';
 
   // the SQL Query to create the table
   String users = 'CREATE TABLE users (userID INTEGER PRIMARY KEY AUTOINCREMENT, userName TEXT UNIQUE, userPass TEXT)';

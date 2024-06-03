@@ -3,7 +3,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-class DatabaseHelperSleepFactors {
+class DatabaseHelperUserSleepFactor {
   // the name of the database
   final databaseName = 'sleepwell.db';
 
@@ -28,8 +28,8 @@ class DatabaseHelperSleepFactors {
     });
   }
 
-  // Create Note
-  Future<int> addUserFactor(SleepFactors sleepFactor) async {
+  // Create Factor
+  Future<int> addUserSleepFactor(SleepFactors sleepFactor) async {
     final Database db = await initDB();
 
     // insert the data that converts the object into a Map JSON Format
@@ -37,19 +37,16 @@ class DatabaseHelperSleepFactors {
     return db.insert('user_sleep_factors', sleepFactor.toMap());
   }
 
-  // Get Notes
-  Future<List<SleepFactors>> getUserFactor(int ID) async {
+  // Get Factor
+  Future<List<SleepFactors>> getUserSleepFactor(int ID) async {
     final Database db = await initDB();
 
-    // fetch the data in a JSON format in a List of Maps
-    // List<Map<String, Object?>> result = await db.query('user_sleep_factors');
     List<Map<String, Object?>> result = await db.rawQuery('SELECT * FROM user_sleep_factors WHERE userID = ?', [ID]);
 
-    // convert the List of Maps to a List of Objects instantiated by the NoteModel Class
     return result.map((e) => SleepFactors.fromMap(e)).toList();
   }
 
-  // Update Notes
+  // Update factors
   Future<int> updateUserSleepFactor(int userID, int comfortabilityFactor, int stressFactor, int noiseFactor, int lightFactor, int ambienceFactor, int temperatureFactor, int distractionsFactor, int blueLightFactor, int academicFactor, int overthinkingFactor, int sleepScheduleFactor) async {
     final Database db = await initDB();
     

@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_login/JsonModels/users.dart';
-import 'package:flutter_login/SQLite/sqlite.dart';
+import 'package:flutter_login/SQLite/sqlite_user.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -23,7 +23,7 @@ class _LoginState extends State<Login> {
   void login() async {
     try {
       // we use await here because the database operates in asynchronous, and returns a future
-      var response = await db.login(Users(userName: username.text, userPass: password.text));
+      var response = await db.login(Users(userName: username.text, userPass: password.text, emailAddress: ''));
 
       if (response == true) {
         Navigator.pushNamed(context, '/welcomepage');
