@@ -12,9 +12,10 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
-  final username = TextEditingController();
-  final password = TextEditingController();
-  final confirm_password = TextEditingController();
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+  final emailController = TextEditingController();
 
   bool isVisiblePass = true;
   bool isVisiblePassConfirm = true;
@@ -34,11 +35,6 @@ class _SignupState extends State<Signup> {
             child: Column(
               children: [
         
-                // Image.asset(
-                //   'lib/assets/logo.jpg',
-                //   width: 100,
-                // ),
-        
                 ListTile(
                   title: Text(
                     "Register New Account",
@@ -57,11 +53,15 @@ class _SignupState extends State<Signup> {
                     borderRadius: BorderRadius.all(Radius.circular(12.0))),
                 
                   child: TextFormField(
-                    controller: username,
+                    controller: usernameController,
         
                     validator: (value) {
                         if (value!.isEmpty) {
                           return "Username is required";
+                        } else if (value.contains('@')) {
+                          return "Username must not contain @";
+                        } else if (value!.length < 4) {
+                          return "Username must be atleast 4 characters";
                         }
                       },
         
@@ -71,6 +71,32 @@ class _SignupState extends State<Signup> {
                       icon: Icon(Icons.person),
                     ),
                     
+                  ),
+                ),
+
+                 Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 3.0),
+                  margin: EdgeInsets.only(top: 6),
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withOpacity(0.5),
+                    borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                  ),
+                  child: TextFormField(
+                    controller: emailController,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return "Email is required";
+                      } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                        return "Please enter a valid email address";
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: "Email",
+                      icon: Icon(Icons.email),
+                    ),
                   ),
                 ),
             
@@ -85,13 +111,18 @@ class _SignupState extends State<Signup> {
                 
                   child: TextFormField(
                     obscureText: isVisiblePass,
-                    controller: password,
+                    controller: passwordController,
         
                     validator: (value) {
-                        if (value!.isEmpty) {
-                          return "Password is required";
-                        }
-                      },
+                      if (value == null || value.isEmpty) {
+                        return "Password is required";
+                      } else if (value.length < 6) {
+                        return "Password must be at least 6 characters";
+                      } else if (!RegExp(r'\d').hasMatch(value)) {
+                        return "Password must contain at least one digit";
+                      }
+                      return null;
+                    },
         
                     decoration: InputDecoration(
                       
@@ -124,13 +155,16 @@ class _SignupState extends State<Signup> {
                 
                   child: TextFormField(
                     obscureText: isVisiblePassConfirm,
-                    controller: confirm_password,
+                    controller: confirmPasswordController,
         
                     validator: (value) {
-                        if (value!.isEmpty) {
-                          return "Password is required";
-                        }
-                      },
+                      if (value == null || value.isEmpty) {
+                        return "Confirm password is required";
+                      } else if (value != passwordController.text) {
+                        return "Passwords do not match";
+                      }
+                      return null;
+                    },
         
                     decoration: InputDecoration(
                       border: InputBorder.none,
@@ -162,12 +196,12 @@ class _SignupState extends State<Signup> {
                   child: TextButton(
                     onPressed: () {
                       
-                      if (password.text != confirm_password.text) {
+                      if (passwordController.text != confirmPasswordController.text) {
                         setState(() {
                           isPasswordNotEqual = true; 
                         });
                       } else if (formKey.currentState!.validate()) {
-                        db.signup(Users(userName: username.text, userPass: password.text)).whenComplete(() {
+                        db.signup(Users(userName: usernameController.text, userPass: passwordController.text)).whenComplete(() {
                           Navigator.pop(context);
                         });
                       }
