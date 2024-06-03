@@ -1,6 +1,6 @@
 {
-    "name": "flutter_sleepwell",
-    "short_name": "flutter_sleepwell",
+    "name": "flutter_login",
+    "short_name": "flutter_login",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
