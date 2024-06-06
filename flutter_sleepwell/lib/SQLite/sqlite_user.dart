@@ -4,12 +4,13 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
+
 class DatabaseHelper {
   // the name of the database
   final databaseName = 'sleepwell.db';
 
   // the SQL Query to create the table
-  String users = 'CREATE TABLE users (userID INTEGER PRIMARY KEY AUTOINCREMENT, userName TEXT UNIQUE, userPass TEXT)';
+  String users = 'CREATE TABLE users (userID INTEGER PRIMARY KEY AUTOINCREMENT, userName TEXT UNIQUE, userPass TEXT, emailAddress TEXT)';
 
   Future<Database> initDB() async {
     // fetch thepath that the database will be located
@@ -17,7 +18,7 @@ class DatabaseHelper {
 
     // create the full database path together with the file 
     final path = join(databasePath!.path, databaseName);
-    // print(path); // locate the file
+    print(path); // locate the file
 
     return openDatabase(
       path, 
@@ -42,8 +43,23 @@ class DatabaseHelper {
 
   Future<int> signup(Users user) async {
     final db = await initDB();
-
+    
     return db.insert('users', user.toMap());
+  }
+
+   Future<int?> getUserIdByUsername(String username) async {
+    final db = await initDB();
+
+    var result = await db.rawQuery(
+      'SELECT userID FROM users WHERE userName = ?',
+      [username],
+    );
+
+    if (result.isNotEmpty) {
+      return result.first['userID'] as int?;
+    } else {
+      return null; // or you can throw an exception or handle this case as needed
+    }
   }
 
   /*

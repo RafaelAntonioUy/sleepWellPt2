@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_login/JsonModels/users.dart';
 import 'package:flutter_login/SQLite/sqlite_user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -22,11 +23,20 @@ class _LoginState extends State<Login> {
 
   void login() async {
     try {
+      Users account = Users(userName: username.text, userPass: password.text, emailAddress: '');
+
       // we use await here because the database operates in asynchronous, and returns a future
-      var response = await db.login(Users(userName: username.text, userPass: password.text, emailAddress: ''));
+      var response = await db.login(account);
 
       if (response == true) {
-        Navigator.pushNamed(context, '/welcomepage');
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+        int? id = await db.getUserIdByUsername(username.text);
+        
+        await prefs.setInt('chosenID', id!).whenComplete(() {
+          Navigator.pushNamed(context, '/main_interface');
+        });
+        
       } else {
         setState(() {
           isLoginError = true;
