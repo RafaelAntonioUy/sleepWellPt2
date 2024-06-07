@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_login/JsonModels/users.dart';
 import 'package:flutter_login/SQLite/sqlite_user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -202,7 +203,10 @@ class _SignupState extends State<Signup> {
                         });
                       } else if (formKey.currentState!.validate()) {
                         db.signup(Users(userName: usernameController.text, userPass: passwordController.text, emailAddress: emailController.text)).whenComplete(() {
+                          
+                          updateChosenID();
                           Navigator.pop(context);
+                          Navigator.pushNamed(context, '/factors_page');
                         });
                       }
                     }, 
@@ -249,5 +253,12 @@ class _SignupState extends State<Signup> {
         ),
       )
     );
+  }
+  
+  void updateChosenID() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? id = await db.getUserIdByUsername(usernameController.text);
+
+    await prefs.setInt('chosenID', id!);
   }
 }

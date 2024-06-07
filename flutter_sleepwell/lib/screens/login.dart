@@ -32,7 +32,7 @@ class _LoginState extends State<Login> {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
 
         int? id = await db.getUserIdByUsername(username.text);
-        
+
         await prefs.setInt('chosenID', id!).whenComplete(() {
           Navigator.pushNamed(context, '/main_interface');
         });
