@@ -24,7 +24,7 @@ class DatabaseHelperSleepFactors {
         solution TEXT
       );
     ''');
-
+    
     await db.execute('''
       CREATE TABLE IF NOT EXISTS user_sleeping_factors (
         userID INTEGER,
