@@ -27,6 +27,8 @@ class _FactorsPageState extends State<FactorsPage> {
     loadUserCheckedFactors();
   }
 
+  
+
   Future<void> loadUserCheckedFactors() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final int? savedChosenID = prefs.getInt('chosenID');
