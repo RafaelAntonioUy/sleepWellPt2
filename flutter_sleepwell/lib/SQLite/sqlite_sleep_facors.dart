@@ -29,29 +29,12 @@ class DatabaseHelperSleepFactors {
     final path = join(databasePath!.path, databaseName);
     
 
-    return await openDatabase(path, version: 1, onCreate: _createDB);
+    return await openDatabase(path);
   }
 
-  Future _createDB(Database db, int version) async {
-    await db.execute('''
-      CREATE TABLE sleeping_factors (
-        factorID INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        causes TEXT,
-        solution TEXT
-      )
-    ''');
-
-    await db.execute('''
-      CREATE TABLE user_sleeping_factors (
-        userID INTEGER,
-        factorID INTEGER,
-        PRIMARY KEY (userID, factorID),
-        FOREIGN KEY (userID) REFERENCES users (userID),
-        FOREIGN KEY (factorID) REFERENCES sleeping_factors (factorID)
-      )
-    ''');
-  }
+  // Future _createDB(Database db, int version) async {
+    
+  // }
 
   Future<void> createFactor(SleepingFactor factor) async {
     final db = await initDB();

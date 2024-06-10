@@ -1,5 +1,4 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:flutter/material.dart';
 import 'package:flutter_login/screens/navigation_screens/clock_page.dart';
 import 'package:flutter_login/screens/navigation_screens/info_page.dart';
@@ -25,11 +24,18 @@ class _MainInterfaceState extends State<MainInterface> {
     InfoPage()
   ];
 
+  final List<String> _pageTitles = [
+    "Statistics",
+    "Clock",
+    "Weather",
+    "Information"
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Main Interface"),
+        title: Text(_pageTitles[_selectedIndex]),
         backgroundColor: Colors.blue[300],
       ),
 
@@ -38,40 +44,36 @@ class _MainInterfaceState extends State<MainInterface> {
       drawer: Drawer(
         child: Padding(
           padding: const EdgeInsets.only(left: 8.0),
-          child: Column (
+          child: Column(
             children: [
               DrawerHeader(child: Icon(Icons.bed, size: 90)),
-            
               ListTile(
                 title: Text("About App"),
                 leading: Icon(Icons.info),
                 onTap: () {
                   // TODO: another screen for about app
-                }
+                },
               ),
-          
               ListTile(
                 title: Text("Factors Checklist"),
                 leading: Icon(Icons.check_circle),
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.pushNamed(context, '/factors_page');
-                }
+                },
               ),
-          
               ListTile(
                 title: Text("Logout"),
                 leading: Icon(Icons.logout),
                 onTap: () {
                   removeChosenID();
-          
                   Navigator.pop(context);
                   Navigator.pushNamed(context, '/login');
-                }
+                },
               ),
             ],
           ),
-        )
+        ),
       ),
 
       bottomNavigationBar: Theme(
@@ -107,7 +109,7 @@ class _MainInterfaceState extends State<MainInterface> {
       ),
     );
   }
-  
+
   void removeChosenID() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove('chosenID');
