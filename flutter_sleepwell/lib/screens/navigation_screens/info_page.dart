@@ -71,9 +71,10 @@ class _InfoPageState extends State<InfoPage> {
                           bottom: index == items.length - 1 ? 16.0 : 8.0, // Bottom margin for the last item
                         ),
                         child: Container(
-                          padding: EdgeInsets.all(16.0),
+                          padding: EdgeInsets.all(20.0),
                           decoration: BoxDecoration(
                             color: Colors.blue[100],
+                            borderRadius: BorderRadius.all(Radius.circular(30.0)),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
