@@ -94,7 +94,7 @@ class DatabaseHelperSleepFactors {
       'user_sleeping_factors',
       where: 'userID = ?',
       whereArgs: [userID],
-    );
+    ); 
     
     return result.map((json) => UserSleepingFactor.fromMap(json)).toList();
   }

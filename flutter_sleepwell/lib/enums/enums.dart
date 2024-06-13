@@ -1,0 +1,1 @@
+enum Menutype {clock, alarm, sleepStart, sleepEnd}

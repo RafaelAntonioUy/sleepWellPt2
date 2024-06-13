@@ -1,11 +1,14 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:flutter_login/enums/enums.dart';
 import 'package:flutter_login/screens/navigation_screens/clock_page.dart';
 import 'package:flutter_login/screens/navigation_screens/info_page.dart';
 import 'package:flutter_login/screens/navigation_screens/statistics_page.dart';
 import 'package:flutter_login/screens/navigation_screens/weather_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+
 
 class MainInterface extends StatefulWidget {
   const MainInterface({super.key});
@@ -27,85 +30,88 @@ class _MainInterfaceState extends State<MainInterface> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Main Interface"),
-        backgroundColor: Colors.blue[300],
-      ),
-
-      body: _pages[_selectedIndex],
-
-      drawer: Drawer(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: Column (
-            children: [
-              DrawerHeader(child: Icon(Icons.bed, size: 90)),
+    return /*ChangeNotifierProvider<MenuInfo>(
+      create: (context) => MenuInfo(Menutype.clock),
+      child: */Scaffold(
+        appBar: AppBar(
+          title: Text("Main Interface"),
+          backgroundColor: Colors.blue[300],
+        ),
+      
+        body: _pages[_selectedIndex],
+      
+        drawer: Drawer(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Column (
+              children: [
+                DrawerHeader(child: Icon(Icons.bed, size: 90)),
+              
+                ListTile(
+                  title: Text("About App"),
+                  leading: Icon(Icons.info),
+                  onTap: () {
+                    // TODO: another screen for about app
+                  }
+                ),
             
-              ListTile(
-                title: Text("About App"),
-                leading: Icon(Icons.info),
-                onTap: () {
-                  // TODO: another screen for about app
-                }
+                ListTile(
+                  title: Text("Factors Checklist"),
+                  leading: Icon(Icons.check_circle),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, '/factors_page');
+                  }
+                ),
+            
+                ListTile(
+                  title: Text("Logout"),
+                  leading: Icon(Icons.logout),
+                  onTap: () {
+                    removeChosenID();
+            
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, '/login');
+                  }
+                ),
+              ],
+            ),
+          )
+        ),
+      
+        bottomNavigationBar: Theme(
+          data: Theme.of(context).copyWith(
+            bottomNavigationBarTheme: BottomNavigationBarThemeData(
+              selectedItemColor: Colors.blue,
+              unselectedItemColor: Colors.grey,
+              backgroundColor: Colors.white,
+            ),
+          ),
+          child: BottomNavigationBar(
+            currentIndex: _selectedIndex,
+            onTap: _navigateBottomBar,
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.timeline),
+                label: "Statistics",
               ),
-          
-              ListTile(
-                title: Text("Factors Checklist"),
-                leading: Icon(Icons.check_circle),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/factors_page');
-                }
+              BottomNavigationBarItem(
+                icon: Icon(Icons.av_timer),
+                label: "Clock",
               ),
-          
-              ListTile(
-                title: Text("Logout"),
-                leading: Icon(Icons.logout),
-                onTap: () {
-                  removeChosenID();
-          
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/login');
-                }
+              BottomNavigationBarItem(
+                icon: Icon(Icons.cloud),
+                label: "Weather",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.info),
+                label: "Information",
               ),
             ],
           ),
-        )
-      ),
-
-      bottomNavigationBar: Theme(
-        data: Theme.of(context).copyWith(
-          bottomNavigationBarTheme: BottomNavigationBarThemeData(
-            selectedItemColor: Colors.blue,
-            unselectedItemColor: Colors.grey,
-            backgroundColor: Colors.white,
-          ),
         ),
-        child: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: _navigateBottomBar,
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.timeline),
-              label: "Statistics",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.av_timer),
-              label: "Clock",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.cloud),
-              label: "Weather",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.info),
-              label: "Information",
-            ),
-          ],
-        ),
-      ),
-    );
+      );
+    //);
   }
   
   void removeChosenID() async {
