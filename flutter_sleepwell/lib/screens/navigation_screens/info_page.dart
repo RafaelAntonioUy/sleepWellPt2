@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_login/JsonModels/sleeping_factor.dart';
 import 'package:flutter_login/JsonModels/users_sleeping_factor.dart';
 import 'package:flutter_login/SQLite/sqlite_sleep_facors.dart';
+import 'package:flutter_login/consts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class InfoPage extends StatefulWidget {
@@ -41,6 +42,7 @@ class _InfoPageState extends State<InfoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: kPrimaryColor,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -73,7 +75,7 @@ class _InfoPageState extends State<InfoPage> {
                         child: Container(
                           padding: EdgeInsets.all(20.0),
                           decoration: BoxDecoration(
-                            color: Colors.blue[100],
+                            color: kPrimaryColorDarker,
                             borderRadius: BorderRadius.all(Radius.circular(30.0)),
                           ),
                           child: Column(
@@ -87,20 +89,21 @@ class _InfoPageState extends State<InfoPage> {
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 24.0,
+                                      color: textColor,
                                     )
                                   ),
-                                  Icon(Icons.lightbulb),
+                                  Icon(Icons.lightbulb, color: textColor,),
                                 ],
                               ),
 
                               SizedBox(height: 10),
 
-                              Text('Causes:', style: TextStyle(fontWeight: FontWeight.bold)),
-                              Text(items[index].causes, style: TextStyle(fontSize: 14.0)),
+                              Text('Causes:', style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
+                              Text(items[index].causes, style: TextStyle(fontSize: 14.0, color: textColor)),
 
                               SizedBox(height: 10),
 
-                              Text('Solution:', style: TextStyle(fontWeight: FontWeight.bold)),
+                              Text('Solution:', style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
                               ListView.builder(
                                 shrinkWrap: true,
                                 physics: NeverScrollableScrollPhysics(),
@@ -111,8 +114,8 @@ class _InfoPageState extends State<InfoPage> {
                                     child: Row(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text('\u2022 ', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
-                                        Expanded(child: Text(solutions[solIndex].trim(), style: TextStyle(fontSize: 14.0))),
+                                        Text('\u2022 ', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: textColor)),
+                                        Expanded(child: Text(solutions[solIndex].trim(), style: TextStyle(fontSize: 14.0, color: textColor))),
                                       ],
                                     ),
                                   );
@@ -135,9 +138,9 @@ class _InfoPageState extends State<InfoPage> {
         onPressed: () {
           loadUserCheckedFactors();
         },
-        child: Icon(Icons.refresh),
+        child: Icon(Icons.refresh, color: kPrimaryColorDarker),
         tooltip: 'Refresh',
-        backgroundColor: Colors.blue[300],
+        backgroundColor: kSecondaryColor,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );

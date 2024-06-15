@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_login/JsonModels/sleeping_factor.dart';
 import 'package:flutter_login/JsonModels/users_sleeping_factor.dart';
 import 'package:flutter_login/SQLite/sqlite_sleep_facors.dart';
+import 'package:flutter_login/consts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FactorsPage extends StatefulWidget {
@@ -55,6 +56,7 @@ class _FactorsPageState extends State<FactorsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: kPrimaryColor,
       appBar: buildAppbar(),
       body: FutureBuilder<List<SleepingFactor>>(
         future: factorItems,
@@ -83,17 +85,23 @@ class _FactorsPageState extends State<FactorsPage> {
                       color: Colors.blue[100],
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                       gradient: LinearGradient(
-                        colors: [Colors.blue[200]!, Colors.blue[400]!], // Define your gradient colors
+                        colors: [kPrimaryColorDarker!, kPrimaryColorDarker!], // Define your gradient colors
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        stops: [0.2, 0.8], 
+                        stops: [0.4, 0.95],
                       ),
                     ),
                     child: ListTile(
                       contentPadding: EdgeInsets.only(left: 30.0, right: 20.0),
                       leading: Checkbox(
                         value: checkedFactors[index],
-                        activeColor: Colors.blue, // Set the active color to blue
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(2.0),
+                        ),
+                        side: WidgetStateBorderSide.resolveWith(
+                          (states) => BorderSide(width: 1.0, color: Colors.white),
+                        ),
+                        activeColor: kPrimaryColor, // Use the current primary color
                         onChanged: (bool? value) {
                           setState(() {
                             checkedFactors[index] = value!;
@@ -101,7 +109,7 @@ class _FactorsPageState extends State<FactorsPage> {
                           });
                         },
                       ),
-                      title: Text(factor.name),
+                      title: Text(factor.name, style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
                     ),
                   );
                 },
@@ -115,11 +123,13 @@ class _FactorsPageState extends State<FactorsPage> {
 
   AppBar buildAppbar() {
     return AppBar(
+      actionsIconTheme: IconThemeData(color: Colors.white),
+      iconTheme: IconThemeData(color: Colors.white),
       title: Text(
         "Sleeping Factors",
-        style: TextStyle(fontWeight: FontWeight.bold),
+        style: TextStyle(fontWeight: FontWeight.bold, color: textColor),
       ),
-      backgroundColor: Colors.blue[300],
+      backgroundColor: kPrimaryColorDarker,
       actions: [
         IconButton(
           onPressed: () {

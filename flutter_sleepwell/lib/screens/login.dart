@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_login/JsonModels/users.dart';
 import 'package:flutter_login/SQLite/sqlite_user.dart';
+import 'package:flutter_login/consts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
@@ -54,6 +55,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: kPrimaryColor,
       body: Form(
         key: formKey,
         child: Center(
@@ -62,8 +64,12 @@ class _LoginState extends State<Login> {
               children: [
         
                 Image.asset(
-                  'lib/assets/logo.jpg',
-                  width: 250,
+                  'lib/assets/icon.png',
+                  width: 200,
+                ),
+
+                SizedBox(
+                  height: 50,
                 ),
             
                 Container(
@@ -72,7 +78,7 @@ class _LoginState extends State<Login> {
                   width: MediaQuery.of(context).size.width * 0.9,
                   
                   decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.5),
+                    color: kSecondaryColor,
                     borderRadius: BorderRadius.all(Radius.circular(12.0))),
                 
                   child: TextFormField(
@@ -99,7 +105,7 @@ class _LoginState extends State<Login> {
                   width: MediaQuery.of(context).size.width * 0.9,
                   
                   decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.5),
+                    color: kSecondaryColor,
                     borderRadius: BorderRadius.all(Radius.circular(12.0))),
                 
                   child: TextFormField(
@@ -119,8 +125,8 @@ class _LoginState extends State<Login> {
                       icon: Icon(Icons.lock),
                       suffixIcon: IconButton(
                         icon: Icon(isVisible ? // change the button icon based from the IsVisible
-                          Icons.visibility:
-                          Icons.visibility_off
+                          Icons.visibility_off:
+                          Icons.visibility
                         ),
                         onPressed: () {
                           setState(() {
@@ -138,7 +144,7 @@ class _LoginState extends State<Login> {
                   width: MediaQuery.of(context).size.width * 0.9,
         
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: kPrimaryColorDarker,
                     borderRadius: BorderRadius.all(Radius.circular(10))),
                 
                   child: TextButton(
@@ -163,7 +169,7 @@ class _LoginState extends State<Login> {
                     mainAxisAlignment: MainAxisAlignment.center,
         
                     children: [
-                      Text("Don't have an account?", style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text("Don't have an account?", style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
                       TextButton(
                         onPressed: () {
                           Navigator.pushNamed(context, '/signup');
@@ -171,7 +177,7 @@ class _LoginState extends State<Login> {
                         child: Text("Sign Up", 
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Colors.blue,
+                          color: kSecondaryColor,
                         ),
                         ),
                       ),

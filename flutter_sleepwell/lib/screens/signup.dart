@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_login/JsonModels/users.dart';
 import 'package:flutter_login/SQLite/sqlite_user.dart';
+import 'package:flutter_login/consts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Signup extends StatefulWidget {
@@ -29,6 +30,7 @@ class _SignupState extends State<Signup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: kPrimaryColor,
       body: Form(
         key: formKey,
         child: Center(
@@ -40,7 +42,8 @@ class _SignupState extends State<Signup> {
                   title: Text(
                     "Register New Account",
                     textAlign: TextAlign.left,
-                    style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold)
+
+                    style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold, color: textColor)
                   )
                 ),
             
@@ -50,7 +53,7 @@ class _SignupState extends State<Signup> {
                   width: MediaQuery.of(context).size.width * 0.9,
                   
                   decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.5),
+                    color: kSecondaryColor,
                     borderRadius: BorderRadius.all(Radius.circular(12.0))),
                 
                   child: TextFormField(
@@ -80,7 +83,7 @@ class _SignupState extends State<Signup> {
                   margin: EdgeInsets.only(top: 6),
                   width: MediaQuery.of(context).size.width * 0.9,
                   decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.5),
+                    color: kSecondaryColor,
                     borderRadius: BorderRadius.all(Radius.circular(12.0)),
                   ),
                   child: TextFormField(
@@ -107,7 +110,7 @@ class _SignupState extends State<Signup> {
                   width: MediaQuery.of(context).size.width * 0.9,
                   
                   decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.5),
+                    color: kSecondaryColor,
                     borderRadius: BorderRadius.all(Radius.circular(12.0))),
                 
                   child: TextFormField(
@@ -151,7 +154,7 @@ class _SignupState extends State<Signup> {
                   width: MediaQuery.of(context).size.width * 0.9,
                   
                   decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.5),
+                    color: kSecondaryColor,
                     borderRadius: BorderRadius.all(Radius.circular(12.0))),
                 
                   child: TextFormField(
@@ -191,7 +194,7 @@ class _SignupState extends State<Signup> {
                   margin: EdgeInsets.only(top: 12),
                   width: MediaQuery.of(context).size.width * 0.9,
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: kPrimaryColorDarker,
                     borderRadius: BorderRadius.all(Radius.circular(10))),
                 
                   child: TextButton(
@@ -225,7 +228,7 @@ class _SignupState extends State<Signup> {
                   margin: EdgeInsets.only(top: 6),
                   width: MediaQuery.of(context).size.width * 0.9,
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: kPrimaryColorDarker,
                     borderRadius: BorderRadius.all(Radius.circular(10))),
                 
                   child: TextButton(
