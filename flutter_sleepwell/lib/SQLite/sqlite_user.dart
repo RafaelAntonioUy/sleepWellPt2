@@ -1,4 +1,3 @@
-// import 'package:flutter/material.dart';
 import 'package:flutter_login/JsonModels/users.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -132,48 +131,4 @@ class DatabaseHelper {
       return null;
     }
   }
-
-  /*
-  // CRUD
-  // Create Note
-  Future<int> createNote(NoteModel note) async {
-    final Database db = await initDB();
-
-    // insert the data that converts the object into a Map JSON Format
-    // when we modify the db, it needs to be in a JSON format
-    return db.insert('notes', note.toMap());
-  }
-
-  // Get Notes
-  Future<List<NoteModel>> getNotes() async {
-    final Database db = await initDB();
-
-    // fetch the data in a JSON format in a List of Maps
-    List<Map<String, Object?>> result = await db.query('notes');
-
-    // convert the List of Maps to a List of Objects instantiated by the NoteModel Class
-    return result.map((e) => NoteModel.fromMap(e)).toList();
-  }
-
-  // Delete Notes
-  Future<int> deleteNote(int id) async {
-    final Database db = await initDB();
-    
-    final List<Map<String, Object?>> result = await db.rawQuery('SELECT * FROM notes WHERE noteId > 1');
-    
-    // List<NoteModel> chosen = result.map((e) => NoteModel.fromMap(e)).toList();
-
-    // for (int i = 0; i < chosen.length; i++) {
-    //   print(chosen[i].noteTitle);
-    // }
-    
-    return db.delete('notes', where: 'noteId = ?', whereArgs: [id]);
-  }
-
-  // Update Notes
-  Future<int> updateNote(title, content, noteId) async {
-    final Database db = await initDB();
-  
-    return db.rawUpdate('UPDATE notes SET noteTitle = ?, noteContent = ? where noteId = ?', [title, content, noteId]);
-  } */
 }

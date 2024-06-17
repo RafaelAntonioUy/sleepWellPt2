@@ -29,6 +29,20 @@ class DatabaseHelperMonitor {
     });
   }
 
+  Future<void> updateSleepRecord(int id, String sleptTime, String wokeTime) async {
+    final db = await database;
+
+    await db.update(
+      'sleep_records',
+      {
+        'slept_time': sleptTime,
+        'woke_time': wokeTime,
+      },
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
   Future<List<Map<String, dynamic>>> getUserSleepRecords(int userId) async {
     Database db = await database;
     return await db.query('sleep_records', where: 'user_id = ?', whereArgs: [userId]);

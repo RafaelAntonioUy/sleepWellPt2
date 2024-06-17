@@ -96,8 +96,8 @@ class ClockPainter extends CustomPainter {
     ..strokeWidth = size.width / 24;
     
 
-    canvas.drawCircle(center, radius * 0.85, fillBrush);
-    canvas.drawCircle(center, radius * 0.85, outlineBrush);
+    canvas.drawCircle(center, radius * 0.75, fillBrush);
+    canvas.drawCircle(center, radius * 0.75, outlineBrush);
 
     var hourHandX = centerX + radius * 0.3 * cos((dateTime.hour * 30 + dateTime.minute * 0.5) * pi / 180);
     var hourHandY = centerX + radius * 0.3 * sin((dateTime.hour * 30 + dateTime.minute * 0.5) * pi / 180);
@@ -105,8 +105,8 @@ class ClockPainter extends CustomPainter {
     var minHandX = centerX + radius * 0.50 * cos(dateTime.minute * 6 * pi / 180);
     var minHandY = centerX + radius * 0.50 * sin(dateTime.minute * 6 * pi / 180);
     canvas.drawLine(center, Offset(minHandX, minHandY), hourHandBrush);
-    var secHandX = centerX + radius * 0.65 * cos(dateTime.second * 6 * pi / 180);
-    var secHandY = centerY + radius * 0.65 * sin(dateTime.second * 6 * pi / 180);
+    var secHandX = centerX + radius * 0.60 * cos(dateTime.second * 6 * pi / 180);
+    var secHandY = centerY + radius * 0.60 * sin(dateTime.second * 6 * pi / 180);
     canvas.drawLine(center, Offset(secHandX, secHandY), secHandBrush);
     
     canvas.drawCircle(center, radius * 0.12, centerFillBrush);

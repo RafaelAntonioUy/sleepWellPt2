@@ -1,8 +1,8 @@
-
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'package:flutter_login/SQLite/sqlite_monitor.dart';
 import 'package:flutter_login/consts.dart';
 import 'package:flutter_login/screens/navigation_screens/clock_view.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -21,6 +21,44 @@ class ClockPage extends StatefulWidget {
 
 class _ClockPageState extends State<ClockPage> {
   String _currentView = 'Clock';
+  final DatabaseHelperMonitor dbHelper = DatabaseHelperMonitor();
+  String? _sleepTime;
+  List<Map<String, dynamic>> sleepRecords = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _requestNotificationPermission();
+    _requestExactAlarmPermission();
+  }
+
+  void _requestNotificationPermission() async {
+    var status = await Permission.notification.status;
+    if (!status.isGranted) {
+      status = await Permission.notification.request();
+      if (status.isGranted) {
+        print("Notification permission granted");
+      } else {
+        print("Notification permission denied");
+      }
+    } else {
+      print("Notification permission already granted");
+    }
+  }
+
+  void _requestExactAlarmPermission() async {
+    var status = await Permission.scheduleExactAlarm.status;
+    if (!status.isGranted) {
+      status = await Permission.scheduleExactAlarm.request();
+      if (status.isGranted) {
+        print("Exact alarm permission granted");
+      } else {
+        print("Exact alarm permission denied");
+      }
+    } else {
+      print("Exact alarm permission already granted");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,39 +70,31 @@ class _ClockPageState extends State<ClockPage> {
     if (!timezoneString.startsWith('-')) offsetSign = '+';
     print(timezoneString);
 
-
     return Scaffold(
       backgroundColor: kPrimaryColor,
       body: Row(
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              buildMenuButton('Clock', Icons.query_builder, () {
-                setState(() {
-                  _currentView = 'Clock';
-                });
-              }),
-              buildMenuButton('Alarm', Icons.alarm_add, () {
-                setState(() {
-                  _currentView = 'Alarm';
-                });
-              }),
-              buildMenuButton('Sleep Start', Icons.lunch_dining, () {
-                setState(() {
-                  _currentView = 'Sleep Start';
-                });
-              }),
-              buildMenuButton('Sleep End', Icons.cruelty_free, () {
-                setState(() {
-                  _currentView = 'Sleep End';
-                });
-              }),
-            ],
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildMenuButton('Clock', Icons.query_builder, () {
+                  setState(() {
+                    _currentView = 'Clock';
+                  });
+                }),
+                buildMenuButton('Alarm', Icons.alarm_add, () {
+                  setState(() {
+                    _currentView = 'Alarm';
+                  });
+                }),
+              ],
+            ),
           ),
           VerticalDivider(
             color: Colors.white54,
-            width: 1,
+            width: 20,
           ),
           Expanded(
             child: Container(
@@ -81,10 +111,6 @@ class _ClockPageState extends State<ClockPage> {
     switch (_currentView) {
       case 'Alarm':
         return AlarmPage();
-      case 'Sleep Start':
-        return SleepStartPage();
-      case 'Sleep End':
-        return SleepEndPage();
       case 'Clock':
       default:
         return buildClockView(formattedTime, formattedDate, offsetSign, timezoneString);
@@ -98,10 +124,8 @@ class _ClockPageState extends State<ClockPage> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(formattedTime,
-                style: TextStyle(color: Colors.white, fontSize: 64)),
-            Text(formattedDate,
-                style: TextStyle(color: Colors.white, fontSize: 20)),
+            Text(formattedTime, style: TextStyle(color: Colors.white, fontSize: 60)),
+            Text(formattedDate, style: TextStyle(color: Colors.white, fontSize: 15)),
           ],
         ),
         Align(
@@ -111,22 +135,31 @@ class _ClockPageState extends State<ClockPage> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Timezone',
-              style: TextStyle(color: Colors.white, fontSize: 24),
-            ),
-            SizedBox(height: 16),
+            Text('Timezone', style: TextStyle(color: Colors.white, fontSize: 24)),
+            SizedBox(height: 6),
             Row(
               children: [
-                Icon(
-                  Icons.language,
-                  color: Colors.white,
-                ),
+                Icon(Icons.language, color: Colors.white),
                 SizedBox(width: 16),
-                Text('UTC' + offsetSign + timezoneString,
-                    style: TextStyle(color: Colors.white, fontSize: 14)),
+                Text('UTC' + offsetSign + timezoneString, style: TextStyle(color: Colors.white, fontSize: 14)),
               ],
             )
+          ],
+        ),
+        SizedBox(height: 12),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: _recordSleep,
+              child: Text('Sleep Now', style: TextStyle(color: textColor)),
+              style: ElevatedButton.styleFrom(backgroundColor: kPrimaryColorDarker),
+            ),
+            ElevatedButton(
+              onPressed: _recordWake,
+              child: Text('Wake Now', style: TextStyle(color: textColor)),
+              style: ElevatedButton.styleFrom(backgroundColor: kPrimaryColorDarker),
+            ),
           ],
         ),
       ],
@@ -140,16 +173,97 @@ class _ClockPageState extends State<ClockPage> {
         onPressed: onPressed,
         child: Column(
           children: [
-            Icon(
-              icon,
-              color: textColor,
-            ),
-            Text(title,
-                style: TextStyle(color: Colors.white, fontSize: 14)),
+            Icon(icon, color: textColor),
+            Text(title, style: TextStyle(color: Colors.white, fontSize: 14)),
           ],
         ),
       ),
     );
+  }
+
+  void _loadSleepRecords() async {
+    sleepRecords = await dbHelper.getUserSleepRecords((await SharedPreferences.getInstance()).getInt('chosenID')!);
+    setState(() {});
+  }
+
+  void _recordSleep() async {
+    String currentTime = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+
+    // Check if there's already an ongoing sleep session
+    List<Map<String, dynamic>> sleepRecords = await dbHelper.getUserSleepRecords((await SharedPreferences.getInstance()).getInt('chosenID')!);
+    if (sleepRecords.isEmpty || sleepRecords.last['woke_time'] != null) {
+      // Insert a new sleep record
+      await dbHelper.insertSleepRecord((await SharedPreferences.getInstance()).getInt('chosenID')!, currentTime, '');
+      _sleepTime = currentTime;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Sleep recorded at: $currentTime'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+
+      _loadSleepRecords();
+    }
+  }
+
+  void _recordWake() async {
+    String currentTime = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+    int? chosenID = (await SharedPreferences.getInstance()).getInt('chosenID');
+
+    print("Current time: $currentTime");
+    print("Chosen ID: $chosenID");
+
+    if (chosenID == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: No user ID found.'),
+        ),
+      );
+      return;
+    }
+
+    List<Map<String, dynamic>> sleepRecords = await dbHelper.getUserSleepRecords(chosenID);
+
+    print("Sleep Records: $sleepRecords");
+
+    if (sleepRecords.isNotEmpty) {
+      Map<String, dynamic> lastRecord = Map<String, dynamic>.from(sleepRecords.last);
+      print("Last Record: $lastRecord");
+
+      if (lastRecord['user_id'] == chosenID && (lastRecord['woke_time'] == null || lastRecord['woke_time'].isEmpty)) {
+        // Update the existing sleep record with the wake time
+        print("Updating record ID: ${lastRecord['id']} with wake time: $currentTime");
+        await dbHelper.updateSleepRecord(lastRecord['id'], lastRecord['slept_time'], currentTime);
+
+        _sleepTime = null;
+        _loadSleepRecords();
+
+        // Calculate sleep duration
+        DateTime sleptTime = DateFormat('yyyy-MM-dd HH:mm:ss').parse(lastRecord['slept_time']);
+        DateTime wokeTime = DateFormat('yyyy-MM-dd HH:mm:ss').parse(currentTime);
+        Duration sleepDuration = wokeTime.difference(sleptTime);
+
+        // Show snackbar with sleep duration
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('You slept for ${sleepDuration.inHours} hours and ${sleepDuration.inMinutes % 60} minutes'),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('No ongoing sleep session to wake from or record already updated.'),
+          ),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('No ongoing sleep session to wake from.'),
+        ),
+      );
+    }
   }
 }
 
@@ -168,7 +282,6 @@ class _AlarmPageState extends State<AlarmPage> {
     super.initState();
     _loadAlarms();
     _timer = Timer.periodic(Duration(seconds: 1), _checkAlarms);
-    requestExactAlarmPermission();
   }
 
   @override
@@ -225,7 +338,7 @@ class _AlarmPageState extends State<AlarmPage> {
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData(
-            primaryColor: kPrimaryColor, // Set primary color
+            primaryColor: kPrimaryColor,
             colorScheme: ColorScheme.light(primary: kPrimaryColor),
             buttonTheme: ButtonThemeData(
               textTheme: ButtonTextTheme.primary,
@@ -247,7 +360,6 @@ class _AlarmPageState extends State<AlarmPage> {
       _scheduleAlarm(alarm);
     }
   }
-
 
   void _scheduleAlarm(DateTime alarmTime) {
     AndroidAlarmManager.oneShotAt(
@@ -311,19 +423,6 @@ class _AlarmPageState extends State<AlarmPage> {
     await player.play(AssetSource('alarm.mp3')); // Play from assets
   }
 
-  Future<void> requestExactAlarmPermission() async {
-    var status = await Permission.scheduleExactAlarm.status;
-    if (!status.isGranted) {
-      status = await Permission.scheduleExactAlarm.request();
-    }
-    if (status.isGranted) {
-      print("Exact alarm permission granted");
-    } else {
-      print("Exact alarm permission denied");
-    }
-  }
-
-
   void alarmCallback() async {
     flutterLocalNotificationsPlugin.show(
       0,
@@ -342,30 +441,5 @@ class _AlarmPageState extends State<AlarmPage> {
 
     final player = AudioPlayer();
     await player.play(AssetSource('alarm.mp3')); // Play from assets
-  }
-
-}
-
-class SleepStartPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Sleep Start Page',
-        style: TextStyle(color: Colors.white, fontSize: 24),
-      ),
-    );
-  }
-}
-
-class SleepEndPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Sleep End Page',
-        style: TextStyle(color: Colors.white, fontSize: 24),
-      ),
-    );
   }
 }

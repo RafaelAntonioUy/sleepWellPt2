@@ -44,3 +44,4 @@ flutter:
     - 'lib/assets/'
     - 'assets/'
     - assets/alarm.mp3
+    - 'assets/images/'

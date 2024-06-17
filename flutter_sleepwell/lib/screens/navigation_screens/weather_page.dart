@@ -338,21 +338,7 @@ class _WeatherPageState extends State<WeatherPage> {
                 fontWeight: FontWeight.w300,
                 color: textColor,
               ),
-        ),
-        
-
-        
-
-        /*Text(
-              " ${DateFormat("M/d/y").format(now)} ",
-              style: const TextStyle(
-                fontWeight: FontWeight.w700,
-                color: textColor,
-              ),
-        ), */
-         
-            
-            
+        ),    
       ],
     );
   }

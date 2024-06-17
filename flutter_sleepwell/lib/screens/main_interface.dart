@@ -57,7 +57,7 @@ class _MainInterfaceState extends State<MainInterface> {
                 title: Text("About App", style: TextStyle(color: textColor)),
                 leading: Icon(Icons.info, color: textColor),
                 onTap: () {
-                  // TODO: another screen for about app
+                  Navigator.pushNamed(context, '/about_app');
                 },
               ),
               ListTile(

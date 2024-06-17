@@ -57,26 +57,6 @@ class _StatisticsPageState extends State<StatisticsPage> {
                     ),
                   ),
                 ),
-                /*
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed: _recordSleep,
-                      child: Text('Record Sleep'),
-                    ),
-                    ElevatedButton(
-                      onPressed: _recordWake,
-                      child: Text('Record Wake'),
-                    ),
-                    if (_sleepTime != null)
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text('Sleep recorded at: $_sleepTime'),
-                      ),
-                  ],
-                ),
-                */
                 Expanded(
                   child: ListView(
                     padding: const EdgeInsets.all(8.0),
@@ -91,6 +71,13 @@ class _StatisticsPageState extends State<StatisticsPage> {
                 ),
               ],
             ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _cleanupSleepRecords,
+        child: Icon(Icons.delete, color: kPrimaryColorDarker),
+        tooltip: 'Clean up incomplete records',
+        backgroundColor: kSecondaryColor,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
@@ -160,8 +147,24 @@ class _StatisticsPageState extends State<StatisticsPage> {
   }
 
   void _loadSleepRecords() async {
-    sleepRecords = await dbHelper.getUserSleepRecords((await SharedPreferences.getInstance()).getInt('chosenID')!);
-    setState(() {});
+    int? userId = (await SharedPreferences.getInstance()).getInt('chosenID');
+    if (userId != null) {
+      sleepRecords = await dbHelper.getUserSleepRecords(userId);
+      setState(() {});
+    }
+  }
+
+  Future<void> _cleanupSleepRecords() async {
+    int? userId = (await SharedPreferences.getInstance()).getInt('chosenID');
+    if (userId != null) {
+      await dbHelper.removeIncompleteRecords(userId);
+      _loadSleepRecords(); // Reload records after cleanup
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Incomplete records cleaned up.'),
+        ),
+      );
+    }
   }
 
   DateTime? _parseDateTime(String? dateTimeString) {
@@ -223,39 +226,4 @@ class _StatisticsPageState extends State<StatisticsPage> {
     }
     return shortestSleep;
   }
-  /*
-
-  void _recordSleep() async {
-    String currentTime = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
-    await dbHelper.insertSleepRecord((await SharedPreferences.getInstance()).getInt('chosenID')!, currentTime, '');
-    _sleepTime = currentTime;
-    _loadSleepRecords();
-  }
-
-  void _recordWake() async {
-    String currentTime = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
-    List<Map<String, dynamic>> sleepRecords = await dbHelper.getUserSleepRecords((await SharedPreferences.getInstance()).getInt('chosenID')!);
-    if (sleepRecords.isNotEmpty) {
-      Map<String, dynamic> lastRecord = Map<String, dynamic>.from(sleepRecords.last);
-      if (lastRecord['user_id'] == (await SharedPreferences.getInstance()).getInt('chosenID')! && (lastRecord['woke_time'] == null || lastRecord['woke_time'].isEmpty)) {
-        lastRecord['woke_time'] = currentTime;
-        await dbHelper.insertSleepRecord((await SharedPreferences.getInstance()).getInt('chosenID')!, lastRecord['slept_time'], lastRecord['woke_time']);
-        _sleepTime = null;
-        _loadSleepRecords();
-
-        // Calculate sleep duration
-        DateTime sleptTime = DateFormat('yyyy-MM-dd HH:mm:ss').parse(lastRecord['slept_time']);
-        DateTime wokeTime = DateFormat('yyyy-MM-dd HH:mm:ss').parse(lastRecord['woke_time']);
-        Duration sleepDuration = wokeTime.difference(sleptTime);
-
-        // Show snackbar
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('You slept for ${sleepDuration.inHours} hours and ${sleepDuration.inMinutes % 60} minutes'),
-          ),
-        );
-      }
-    }
-  }
-  */
 }

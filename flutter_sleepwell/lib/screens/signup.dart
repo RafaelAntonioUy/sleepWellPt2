@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_login/JsonModels/users.dart';
 import 'package:flutter_login/SQLite/sqlite_user.dart';
 import 'package:flutter_login/consts.dart';
-import 'package:lottie/lottie.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -59,6 +57,8 @@ class _SignupState extends State<Signup> {
                 
                   child: TextFormField(
                     controller: usernameController,
+
+                    cursorColor: kPrimaryColorDarker,
         
                     validator: (value) {
                         if (value!.isEmpty) {
@@ -89,6 +89,9 @@ class _SignupState extends State<Signup> {
                   ),
                   child: TextFormField(
                     controller: emailController,
+
+                    cursorColor: kPrimaryColorDarker,
+
                     validator: (value) {
                       if (value!.isEmpty) {
                         return "Email is required";
@@ -117,6 +120,8 @@ class _SignupState extends State<Signup> {
                   child: TextFormField(
                     obscureText: isVisiblePass,
                     controller: passwordController,
+
+                    cursorColor: kPrimaryColorDarker,
         
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -161,6 +166,8 @@ class _SignupState extends State<Signup> {
                   child: TextFormField(
                     obscureText: isVisiblePassConfirm,
                     controller: confirmPasswordController,
+
+                    cursorColor: kPrimaryColorDarker,
         
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -262,16 +269,4 @@ class _SignupState extends State<Signup> {
       )
     );
   }
-  
-  // Future<void> updateChosenID() async {
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   int? id = await db.getMaxUserId();
-
-  //   if (id != null) {
-  //     await prefs.setInt('chosenID', id);
-  //   } else {
-  //     // Handle the case where there are no users or something went wrong
-  //     print('No user found or error occurred while fetching the max user ID');
-  //   }
-  // }
 }

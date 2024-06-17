@@ -62,7 +62,7 @@ class _FactorsPageState extends State<FactorsPage> {
         future: factorItems,
         builder: (BuildContext context, AsyncSnapshot<List<SleepingFactor>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator(color: textColor));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(child: Text("No Data"));
           } else if (snapshot.hasError) {

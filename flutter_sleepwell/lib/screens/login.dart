@@ -90,6 +90,8 @@ class _LoginState extends State<Login> {
                       }
                     },
 
+                    cursorColor: kPrimaryColorDarker,
+
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: "Username",
@@ -111,6 +113,8 @@ class _LoginState extends State<Login> {
                   child: TextFormField(
                     obscureText: isVisible,
                     controller: password,
+
+                    cursorColor: kPrimaryColorDarker,
 
                     validator: (value) {
                       if (value!.isEmpty) {
