@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_login/JsonModels/users.dart';
 import 'package:flutter_login/SQLite/sqlite_user.dart';
 import 'package:flutter_login/consts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Signup extends StatefulWidget {
@@ -135,8 +136,8 @@ class _SignupState extends State<Signup> {
                       icon: Icon(Icons.lock),
                       suffixIcon: IconButton(
                         icon: Icon(isVisiblePass ? // change the button icon based from the IsVisible
-                          Icons.visibility:
-                          Icons.visibility_off
+                          Icons.visibility_off:
+                          Icons.visibility
                         ),
                         onPressed: () {
                           setState(() {
@@ -176,8 +177,8 @@ class _SignupState extends State<Signup> {
                       icon: Icon(Icons.lock),
                       suffixIcon: IconButton(
                         icon: Icon(isVisiblePassConfirm ? // change the button icon based from the IsVisible
-                          Icons.visibility:
-                          Icons.visibility_off
+                          Icons.visibility_off:
+                          Icons.visibility
                         ),
                         onPressed: () {
                           setState(() {
@@ -198,19 +199,23 @@ class _SignupState extends State<Signup> {
                     borderRadius: BorderRadius.all(Radius.circular(10))),
                 
                   child: TextButton(
-                    onPressed: () {
+                    onPressed: () async {
                       
                       if (passwordController.text != confirmPasswordController.text) {
                         setState(() {
                           isPasswordNotEqual = true; 
                         });
                       } else if (formKey.currentState!.validate()) {
-                        db.signup(Users(userName: usernameController.text, userPass: passwordController.text, emailAddress: emailController.text)).whenComplete(() {
-                          
-                          updateChosenID();
-                          Navigator.pop(context);
-                          Navigator.pushNamed(context, '/factors_page');
-                        });
+                        await db.signup(Users(
+                          userName: usernameController.text, 
+                          userPass: passwordController.text, 
+                          emailAddress: emailController.text
+                        ));
+                        
+                        // await Future.delayed(Duration(milliseconds: 100));
+                        // await updateChosenID();
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/welcome_page');
                       }
                     }, 
                     child: Text(
@@ -258,10 +263,15 @@ class _SignupState extends State<Signup> {
     );
   }
   
-  void updateChosenID() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    int? id = await db.getUserIdByUsername(usernameController.text);
+  // Future<void> updateChosenID() async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   int? id = await db.getMaxUserId();
 
-    await prefs.setInt('chosenID', id!);
-  }
+  //   if (id != null) {
+  //     await prefs.setInt('chosenID', id);
+  //   } else {
+  //     // Handle the case where there are no users or something went wrong
+  //     print('No user found or error occurred while fetching the max user ID');
+  //   }
+  // }
 }
