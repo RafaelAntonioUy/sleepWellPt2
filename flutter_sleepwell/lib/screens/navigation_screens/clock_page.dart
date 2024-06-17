@@ -205,7 +205,7 @@ class _AlarmPageState extends State<AlarmPage> {
     flutterLocalNotificationsPlugin.show(
       0,
       'Alarm',
-      'An alarm is going off!',
+      'An alarm is ringing!',
       NotificationDetails(
         android: AndroidNotificationDetails(
           'alarm_channel',
@@ -222,7 +222,20 @@ class _AlarmPageState extends State<AlarmPage> {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData(
+            primaryColor: kPrimaryColor, // Set primary color
+            colorScheme: ColorScheme.light(primary: kPrimaryColor),
+            buttonTheme: ButtonThemeData(
+              textTheme: ButtonTextTheme.primary,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
+
     if (picked != null && picked != _selectedTime) {
       final now = DateTime.now();
       final alarm = DateTime(now.year, now.month, now.day, picked.hour, picked.minute);
@@ -234,6 +247,7 @@ class _AlarmPageState extends State<AlarmPage> {
       _scheduleAlarm(alarm);
     }
   }
+
 
   void _scheduleAlarm(DateTime alarmTime) {
     AndroidAlarmManager.oneShotAt(
