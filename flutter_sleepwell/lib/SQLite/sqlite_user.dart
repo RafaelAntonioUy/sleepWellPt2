@@ -61,6 +61,15 @@ class DatabaseHelper {
       ('Sleep Schedule', 'Irregular sleep patterns and inconsistent bedtime routines. Can disrupt the bodys internal clock, especially with varying work shifts.', 'Establish a consistent sleep schedule by going to bed and waking up at the same time every day. Avoid long naps during the day. Create a relaxing pre-sleep routine to signal your body it is time to sleep.'),
       ('Overthinking', 'Excessive worry and mental activity before bed. Can cause difficulty falling and staying asleep, often due to personal and financial concerns.', 'Practice mindfulness and stress-reducing techniques such as journaling or meditation. Create a to-do list for the next day to clear your mind. Seek professional advice if overthinking continues to affect sleep.')
       ''');
+
+      await db.execute('''
+        CREATE TABLE sleep_records (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id INTEGER NOT NULL,
+          slept_time TEXT NOT NULL,
+          woke_time TEXT
+        )
+      ''');
      
     });
   }
@@ -95,6 +104,32 @@ class DatabaseHelper {
       return result.first['userID'] as int?;
     } else {
       return null; // or you can throw an exception or handle this case as needed
+    }
+  }
+
+  Future<int?> getMaxUserId() async {
+    final db = await initDB();
+
+    var result = await db.rawQuery('SELECT MAX(userID) as maxID FROM users');
+
+    if (result.isNotEmpty) {
+      return result.first['maxID'] as int?;
+    } else {
+      return null; // or you can throw an exception or handle this case as needed
+    }
+  }
+
+  Future<Users?> getUserById(int userId) async {
+    final db = await initDB();
+    var result = await db.query(
+      'users',
+      where: 'userID = ?',
+      whereArgs: [userId],
+    );
+    if (result.isNotEmpty) {
+      return Users.fromMap(result.first);
+    } else {
+      return null;
     }
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_login/consts.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:weather/weather.dart';
 
@@ -22,6 +23,51 @@ class _WeatherPageState extends State<WeatherPage> {
     super.initState();
     _getLocationPermission();
   }
+
+  Widget getWeatherIcon(int code) {
+		switch (code) {
+		  case >= 200 && < 300 :
+		    return Image.asset(
+					'assets/1.png',
+          height: 250,
+				);
+			case >= 300 && < 400 :
+		    return Image.asset(
+					'assets/2.png',
+          height: 250,
+				);
+			case >= 500 && < 600 :
+		    return Image.asset(
+					'assets/3.png',
+          height: 250,
+				);
+			case >= 600 && < 700 :
+		    return Image.asset(
+					'assets/4.png',
+          height: 250,
+				);
+			case >= 700 && < 800 :
+		    return Image.asset(
+					'assets/5.png',
+          height: 250,
+				);
+			case == 800 :
+		    return Image.asset(
+					'assets/6.png',
+          height: 250,
+				);
+			case > 800 && <= 804 :
+		    return Image.asset(
+					'assets/7.png',
+          height: 250,
+				);
+		  default:
+			return Image.asset(
+				'assets/7.png',
+        height: 250,
+			);
+		}
+	}
 
   Future<void> _getLocationPermission() async {
     var status = await Permission.location.request();
@@ -73,8 +119,21 @@ class _WeatherPageState extends State<WeatherPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kPrimaryColor,
-      body: _buildUI(),
+      backgroundColor: kPrimaryColorDarker,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              kPrimaryColor,
+              kPrimaryColorDarker,
+            ],
+            stops: [0.1, 0.7],
+          ),
+        ),
+        child: _buildUI(),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _refreshWeather,
         child: Icon(Icons.refresh, color: kPrimaryColorDarker),
@@ -95,14 +154,159 @@ class _WeatherPageState extends State<WeatherPage> {
       height: MediaQuery.sizeOf(context).height,
       child: Column(
         mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          _locationHeader(),
-          SizedBox(height: MediaQuery.sizeOf(context).height * 0.03),
-          _dateTimeInfo(),
-          SizedBox(height: MediaQuery.sizeOf(context).height * 0.05),
+          Row(
+            children: [
+              SizedBox(width: 10.0),
+              Lottie.asset('lib/assets/jumping_location.json', width: 60),
+              _locationHeader(),
+            ],
+          ),
+          // SizedBox(height: MediaQuery.sizeOf(context).height * 0.03),
+          
+          SizedBox(height: MediaQuery.sizeOf(context).height * 0.01),
           _weatherIcon(),
+          _dateTimeInfo(),
+
+          const SizedBox(height: 35),
+          
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Row(
+                children: [
+                  Image.asset(
+                    'assets/11.png',
+                    scale: 8,
+                  ),
+                  const SizedBox(width: 5),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Sunrise',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w300
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        DateFormat().add_jm().format(_weather!.sunrise!),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+              Row(
+                children: [
+                  Image.asset(
+                    'assets/12.png',
+                    scale: 8,
+                  ),
+                  const SizedBox(width: 5),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Sunset',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w300
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        DateFormat().add_jm().format(_weather!.sunset!),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ],
+          ),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 5.0),
+            child: Divider(
+              color: Colors.grey,
+            ),
+          ),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+
+              Row(
+                children: [
+                  Image.asset(
+                    'assets/13.png',
+                    scale: 8,
+                  ),
+                  const SizedBox(width: 5),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Temp Max',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w300
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        "${_weather!.tempMax!}",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700
+                        ),
+                      ),
+                    ],
+                  )
+                ]
+              ),
+              Row(
+                children: [
+                  Image.asset(
+                    'assets/14.png',
+                    scale: 8,
+                  ),
+                  const SizedBox(width: 5),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Temp Min',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w300
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        "${_weather!.tempMin!}",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700
+                        ),
+                      ),
+                    ],
+                  )
+                ]
+              )
+            ],
+          ),
+
         ],
       ),
     );
@@ -112,46 +316,43 @@ class _WeatherPageState extends State<WeatherPage> {
     return Text(
       _weather?.areaName ?? "",
       style: TextStyle(
-        fontSize: 35.0,
-        fontWeight: FontWeight.bold,
-        color: kSecondaryColor,
+        fontSize: 20.0,
+        fontWeight: FontWeight.w400,
+        color: textColor,
       ),
     );
   }
 
   Widget _dateTimeInfo() {
     DateTime now = _weather!.date!;
-    return Column(
-      children: [
-        Text(
-          DateFormat("hh:mm a").format(now),
-          style: TextStyle(
-            fontSize: 35.0,
-            color: textColor,
-          ),
-        ),
-        SizedBox(height: 10),
-        Row(
-          mainAxisSize: MainAxisSize.max,
+    return Row (
+      mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              DateFormat("EEEE").format(now),
+      children: [
+
+        Text(
+              DateFormat("EEEE d • hh:mm a").format(now),
               style: const TextStyle(
-                fontWeight: FontWeight.w700,
+                fontSize: 16.0,
+                fontWeight: FontWeight.w300,
                 color: textColor,
               ),
-            ),
-            Text(
+        ),
+        
+
+        
+
+        /*Text(
               " ${DateFormat("M/d/y").format(now)} ",
               style: const TextStyle(
                 fontWeight: FontWeight.w700,
                 color: textColor,
               ),
-            ),
-          ],
-        ),
+        ), */
+         
+            
+            
       ],
     );
   }
@@ -162,31 +363,26 @@ class _WeatherPageState extends State<WeatherPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Container(
-          height: MediaQuery.sizeOf(context).height * 0.20,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(
-                "http://openweathermap.org/img/wn/${_weather?.weatherIcon}@4x.png",
-              ),
-            ),
+        getWeatherIcon(_weather!.weatherConditionCode!),
+
+        Text(
+          "${_weather?.tempFeelsLike!.celsius!.round().toString()}°C" ?? "",
+          style: const TextStyle(
+            color: textColor,
+            fontSize: 35.0,
+            fontWeight: FontWeight.w600,
           ),
         ),
+
         Text(
-          _weather?.weatherDescription ?? "",
+          _weather?.weatherDescription?.toUpperCase() ?? "",
           style: const TextStyle(
             fontSize: 20.0,
             color: textColor,
+            fontWeight: FontWeight.w400
           ),
         ),
-        Text(
-          "Feels like ${_weather?.tempFeelsLike!.celsius!.round().toString()}°C" ?? "",
-          style: const TextStyle(
-            color: textColor,
-            fontSize: 20.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        
       ],
     );
   }

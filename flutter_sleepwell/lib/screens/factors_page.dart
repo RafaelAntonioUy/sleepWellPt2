@@ -127,7 +127,7 @@ class _FactorsPageState extends State<FactorsPage> {
       iconTheme: IconThemeData(color: Colors.white),
       title: Text(
         "Sleeping Factors",
-        style: TextStyle(fontWeight: FontWeight.bold, color: textColor),
+        style: TextStyle(color: textColor),
       ),
       backgroundColor: kPrimaryColorDarker,
       actions: [

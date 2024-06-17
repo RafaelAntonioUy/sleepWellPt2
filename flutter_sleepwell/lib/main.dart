@@ -138,7 +138,7 @@ class MainApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Login(),
       routes: {
-        '/welcomepage': (context) => WelcomePage(),
+        '/welcome_page': (context) => WelcomePage(),
         '/login': (context) => Login(),
         '/signup': (context) => Signup(),
         '/factors_page': (context) => FactorsPage(),
