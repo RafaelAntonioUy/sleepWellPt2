@@ -1,33 +1,17 @@
-/*
-import 'package:flutter/material.dart';
-import 'package:flutter_login/consts.dart';
 
-class ClockPage extends StatefulWidget {
-  const ClockPage({super.key});
-
-  @override
-  State<ClockPage> createState() => _ClockPageState();
-}
-
-class _ClockPageState extends State<ClockPage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kPrimaryColor,
-      body: Center(child: Text("Clock Page"),)
-    );
-  }
-}
-*/
-
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_login/consts.dart';
 import 'package:flutter_login/screens/navigation_screens/clock_view.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
+
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
 class ClockPage extends StatefulWidget {
   const ClockPage({super.key});
 
@@ -48,8 +32,9 @@ class _ClockPageState extends State<ClockPage> {
     if (!timezoneString.startsWith('-')) offsetSign = '+';
     print(timezoneString);
 
+
     return Scaffold(
-      backgroundColor: Color(0xFF2D2F41),
+      backgroundColor: kPrimaryColor,
       body: Row(
         children: [
           Column(
@@ -110,56 +95,39 @@ class _ClockPageState extends State<ClockPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Flexible(
-          flex: 1,
-          fit: FlexFit.tight,
-          child: Text('Clock',
-              style: TextStyle(color: Colors.white, fontSize: 24)),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(formattedTime,
+                style: TextStyle(color: Colors.white, fontSize: 64)),
+            Text(formattedDate,
+                style: TextStyle(color: Colors.white, fontSize: 20)),
+          ],
         ),
-        Flexible(
-          flex: 2,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(formattedTime,
-                  style: TextStyle(color: Colors.white, fontSize: 64)),
-              Text(formattedDate,
-                  style: TextStyle(color: Colors.white, fontSize: 20)),
-            ],
-          ),
+        Align(
+          alignment: Alignment.center,
+          child: ClockView(size: MediaQuery.of(context).size.height / 3),
         ),
-        Flexible(
-          flex: 5,
-          fit: FlexFit.tight,
-          child: Align(
-            alignment: Alignment.center,
-            child: ClockView(size: MediaQuery.of(context).size.height / 3),
-          ),
-        ),
-        Flexible(
-          flex: 2,
-          fit: FlexFit.tight,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Timezone',
-                style: TextStyle(color: Colors.white, fontSize: 24),
-              ),
-              SizedBox(height: 16),
-              Row(
-                children: [
-                  Icon(
-                    Icons.language,
-                    color: Colors.white,
-                  ),
-                  SizedBox(width: 16),
-                  Text('UTC' + offsetSign + timezoneString,
-                      style: TextStyle(color: Colors.white, fontSize: 14)),
-                ],
-              )
-            ],
-          ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Timezone',
+              style: TextStyle(color: Colors.white, fontSize: 24),
+            ),
+            SizedBox(height: 16),
+            Row(
+              children: [
+                Icon(
+                  Icons.language,
+                  color: Colors.white,
+                ),
+                SizedBox(width: 16),
+                Text('UTC' + offsetSign + timezoneString,
+                    style: TextStyle(color: Colors.white, fontSize: 14)),
+              ],
+            )
+          ],
         ),
       ],
     );
@@ -174,7 +142,7 @@ class _ClockPageState extends State<ClockPage> {
           children: [
             Icon(
               icon,
-              color: Color.fromARGB(255, 10, 91, 145),
+              color: textColor,
             ),
             Text(title,
                 style: TextStyle(color: Colors.white, fontSize: 14)),
@@ -185,25 +153,6 @@ class _ClockPageState extends State<ClockPage> {
   }
 }
 
-/*
-class AlarmPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'alarm',
-            style: TextStyle(color: Colors.white, fontSize: 24)
-          ),
-          ListView(),
-        ],
-      ),
-    );
-  }
-}*/
-///*
 class AlarmPage extends StatefulWidget {
   @override
   _AlarmPageState createState() => _AlarmPageState();
@@ -219,6 +168,7 @@ class _AlarmPageState extends State<AlarmPage> {
     super.initState();
     _loadAlarms();
     _timer = Timer.periodic(Duration(seconds: 1), _checkAlarms);
+    requestExactAlarmPermission();
   }
 
   @override
@@ -246,6 +196,7 @@ class _AlarmPageState extends State<AlarmPage> {
     for (var alarm in _alarms) {
       if (now.hour == alarm.hour && now.minute == alarm.minute && now.second == 0) {
         _showAlarmNotification();
+        _playAlarm();
       }
     }
   }
@@ -259,7 +210,6 @@ class _AlarmPageState extends State<AlarmPage> {
         android: AndroidNotificationDetails(
           'alarm_channel',
           'Alarm Notifications',
-     //     'Channel for alarm notifications',
           importance: Importance.max,
           priority: Priority.high,
           ticker: 'ticker',
@@ -289,39 +239,23 @@ class _AlarmPageState extends State<AlarmPage> {
     AndroidAlarmManager.oneShotAt(
       alarmTime,
       alarmTime.hashCode,
-      _alarmCallback,
+      alarmCallback,
       exact: true,
       wakeup: true,
     );
   }
 
-  static void _alarmCallback() {
-    flutterLocalNotificationsPlugin.show(
-      0,
-      'Alarm',
-      'Your alarm is ringing!',
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          'alarm_channel',
-          'Alarm Notifications',
-       //   'Channel for alarm notifications',
-          importance: Importance.max,
-          priority: Priority.high,
-          ticker: 'ticker',
-        ),
-      ),
-    );
+  void _deleteAlarm(DateTime alarm) {
+    setState(() {
+      _alarms.remove(alarm);
+    });
+    _saveAlarms();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Alarm Page', style: TextStyle(color: Color.fromARGB(255, 255, 255, 255))),
-        backgroundColor: Color.fromARGB(255, 8, 12, 32),
-        
-      ),
-      backgroundColor: Color.fromARGB(255, 64, 70, 121),
+      backgroundColor: kPrimaryColor,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -330,25 +264,74 @@ class _AlarmPageState extends State<AlarmPage> {
               onPressed: () => _selectTime(context),
               child: Text('Select Alarm Time', style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)) ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color.fromARGB(255, 3, 16, 128), // Background color of the button
+                backgroundColor: kPrimaryColorDarker // Background color of the button
               ),
             ),
             SizedBox(height: 20),
             Text(
               'Alarms:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: textColor),
             ),
-            ..._alarms.map((alarm) => Text(
-                  DateFormat('HH:mm').format(alarm),
-                  style: TextStyle(fontSize: 18),
-                )),
+            Expanded(
+              child: ListView(
+                children: _alarms.map((alarm) => ListTile(
+                  title: Text(
+                    DateFormat('HH:mm a').format(alarm),
+                    style: TextStyle(fontSize: 18, color: textColor),
+                  ),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete, color: textColor),
+                    onPressed: () => _deleteAlarm(alarm),
+                  ),
+                )).toList(),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
+
+  void _playAlarm() async {
+    final player = AudioPlayer();
+    await player.play(AssetSource('alarm.mp3')); // Play from assets
+  }
+
+  Future<void> requestExactAlarmPermission() async {
+    var status = await Permission.scheduleExactAlarm.status;
+    if (!status.isGranted) {
+      status = await Permission.scheduleExactAlarm.request();
+    }
+    if (status.isGranted) {
+      print("Exact alarm permission granted");
+    } else {
+      print("Exact alarm permission denied");
+    }
+  }
+
+
+  void alarmCallback() async {
+    flutterLocalNotificationsPlugin.show(
+      0,
+      'Alarm',
+      'Your alarm is ringing!',
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          'alarm_channel',
+          'Alarm Notifications',
+          importance: Importance.max,
+          priority: Priority.high,
+          ticker: 'ticker',
+        ),
+      ),
+    );
+
+    final player = AudioPlayer();
+    await player.play(AssetSource('alarm.mp3')); // Play from assets
+  }
+
 }
-//*/
+
 class SleepStartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
