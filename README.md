@@ -1,4 +1,4 @@
-# SleepWell Apllication Source Code
+# SleepWell Application Source Code
 
 BinaRizz BSCpE2A
 Loreen Wilmer Yboa
